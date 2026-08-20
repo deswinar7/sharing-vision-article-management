@@ -1,0 +1,63 @@
+{
+  "info": {
+    "name": "Sharing Vision Article API",
+    "description": "Requests for the Article Management technical assessment.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "article_id", "value": "1" }
+  ],
+  "item": [
+    { "name": "Health Check", "request": { "method": "GET", "url": "{{base_url}}/health" } },
+    {
+      "name": "Articles",
+      "item": [
+        {
+          "name": "Create Draft",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"A practical guide to writing maintainable Go services\",\n  \"content\": \"Maintainable services begin with explicit boundaries, focused packages, and predictable error handling. This example content is intentionally long enough to satisfy the assessment validation while also reading like realistic editorial copy for an article management workflow. It explains a useful idea without relying on placeholder filler.\",\n  \"category\": \"Engineering\",\n  \"status\": \"draft\"\n}" },
+            "url": "{{base_url}}/article/"
+          },
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) { pm.collectionVariables.set('article_id', pm.response.json().id); }"] } }]
+        },
+        {
+          "name": "Create Published Article",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Designing a reliable publishing workflow for editorial teams\",\n  \"content\": \"A reliable publishing workflow makes article state visible and keeps every transition intentional. Drafts remain editable, published work appears in the public preview, and discarded work moves to trash before permanent deletion. This content is long enough to exercise the validation contract with a realistic example request.\",\n  \"category\": \"Product\",\n  \"status\": \"publish\"\n}" },
+            "url": "{{base_url}}/article/"
+          }
+        },
+        { "name": "List Articles", "request": { "method": "GET", "url": "{{base_url}}/article/10/0" } },
+        { "name": "List Published Articles", "request": { "method": "GET", "url": "{{base_url}}/article/10/0?status=publish" } },
+        { "name": "List Draft Articles", "request": { "method": "GET", "url": "{{base_url}}/article/10/0?status=draft" } },
+        { "name": "List Trashed Articles", "request": { "method": "GET", "url": "{{base_url}}/article/10/0?status=thrash" } },
+        { "name": "Get Article Detail", "request": { "method": "GET", "url": "{{base_url}}/article/{{article_id}}" } },
+        {
+          "name": "Update Article",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"An updated guide to writing maintainable Go services\",\n  \"content\": \"Maintainable services benefit from explicit boundaries, focused packages, and predictable error handling. This updated example is deliberately detailed enough to satisfy the API validation rules and demonstrates that a full article can be edited through the required endpoint without exposing persistence details to clients.\",\n  \"category\": \"Engineering\",\n  \"status\": \"publish\"\n}" },
+            "url": "{{base_url}}/article/{{article_id}}"
+          }
+        },
+        {
+          "name": "Move Article To Trash",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"thrash\"\n}" },
+            "url": "{{base_url}}/article/{{article_id}}"
+          }
+        },
+        { "name": "Delete Article", "request": { "method": "DELETE", "url": "{{base_url}}/article/{{article_id}}" } }
+      ]
+    }
+  ]
+}
+
